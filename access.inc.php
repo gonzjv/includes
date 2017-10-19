@@ -58,6 +58,20 @@ function databaseContainsAuthor($email, $password) {
     $row = $s->fetch();
 
     if ($row[0] > 0) {
+        try {
+            $sql = 'SELECT name FROM author
+        WHERE email = :email';
+            $s = $pdo->prepare($sql);
+            $s->bindValue(':email', $email);
+            $s->execute();
+        } catch (PDOException $e) {
+            $error = 'Error searching for name.';
+            include 'error.html.php';
+            exit();
+        }
+        $row = $s->fetch();
+        $_SESSION['username'] = $row['name'];
+
         return TRUE;
     } else {
         return FALSE;
