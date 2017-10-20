@@ -1,5 +1,5 @@
 <?php
-
+//session_start();
 function userIsLoggedIn() {
     if (isset($_POST['action']) and $_POST['action'] == 'login') {
         if (!isset($_POST['email']) or $_POST['email'] == '' or ! isset($_POST['password']) or $_POST['password'] == '') {
