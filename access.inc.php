@@ -1,4 +1,5 @@
 <?php
+
 function userIsLoggedIn() {
     if (isset($_POST['action']) and $_POST['action'] == 'login') {
         if (!isset($_POST['email']) or $_POST['email'] == '' or ! isset($_POST['password']) or $_POST['password'] == '') {
@@ -6,9 +7,9 @@ function userIsLoggedIn() {
             return FALSE;
         }
 
-        $password = md5($_POST['password'] . 'jv');
+        $password = md5($_POST['password'] . 'user');
 
-        if (databaseContainsAuthor($_POST['email'], $password)) {
+        if (db_contains_user($_POST['email'], $password)) {
             $_SESSION['loggedIn'] = TRUE;
             $_SESSION['email'] = $_POST['email'];
             $_SESSION['password'] = $password;
@@ -30,22 +31,44 @@ function userIsLoggedIn() {
         exit();
     }
 
+    if (isset($_POST['action']) and $_POST['action'] == 'sign_up') {
+        include 'db.inc.php';
+        try {
+            $sql = 'INSERT INTO user SET 
+            first_name= :first_name,
+            last_name= :last_name,
+            email=:email,
+            phone=:phone';
+            $s = $pdo->prepare($sql);
+            $s->bindValue(':first_name', $_POST['first_name']);
+            $s->bindValue(':last_name', $_POST['last_name']);
+            $s->bindValue(':email', $_POST['email']);
+            $s->bindValue(':phone', $_POST['phone']);
+            $s->execute();
+        } catch (PDOException $e) {
+            $error = 'Error when add user.';
+            include 'error.html.php';
+            exit();
+        }
+        header('Location: ' . $_POST['goto']);
+        exit();
+    }
     if (isset($_SESSION['loggedIn'])) {
-        return databaseContainsAuthor($_SESSION['email'], $_SESSION['password']);
+        return db_contains_user($_SESSION['email'], $_SESSION['password']);
     }
 }
 
-function databaseContainsAuthor($email, $password) {
+function db_contains_user($email, $password) {
     include 'db.inc.php';
     try {
-        $sql = 'SELECT COUNT(*) FROM author
+        $sql = 'SELECT COUNT(*) FROM user
         WHERE email = :email AND password = :password';
         $s = $pdo->prepare($sql);
         $s->bindValue(':email', $email);
         $s->bindValue(':password', $password);
         $s->execute();
     } catch (PDOException $e) {
-        $error = 'Error searching for author.';
+        $error = 'Error searching for user.';
         include 'error.html.php';
         exit();
     }
@@ -54,18 +77,18 @@ function databaseContainsAuthor($email, $password) {
 
     if ($row[0] > 0) {
         try {
-            $sql = 'SELECT name FROM author
+            $sql = 'SELECT first_name FROM user
         WHERE email = :email';
             $s = $pdo->prepare($sql);
             $s->bindValue(':email', $email);
             $s->execute();
         } catch (PDOException $e) {
-            $error = 'Error searching for name.';
+            $error = 'Error searching for first_name.';
             include 'error.html.php';
             exit();
         }
         $row = $s->fetch();
-        $_SESSION['username'] = $row['name'];
+        $_SESSION['first_name'] = $row['first_name'];
 
         return TRUE;
     } else {
@@ -77,8 +100,8 @@ function userHasRole($role) {
     include 'db.inc.php';
 
     try {
-        $sql = "SELECT COUNT(*) FROM author
-        INNER JOIN authorrole ON info.id = authorid
+        $sql = "SELECT COUNT(*) FROM user
+        INNER JOIN userrole ON info.id = userid
         INNER JOIN role ON roleid = role.id
         WHERE email = :email AND role.id = :roleId";
         $s = $pdo->prepare($sql);
@@ -86,7 +109,7 @@ function userHasRole($role) {
         $s->bindValue(':roleId', $role);
         $s->execute();
     } catch (PDOException $e) {
-        $error = 'Error searching for author roles.';
+        $error = 'Error searching for user roles.';
         include 'error.html.php';
         exit();
     }
