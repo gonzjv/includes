@@ -96,7 +96,7 @@ function db_contains_user($email, $password) {
     }
 }
 
-function userHasRole($role) {
+function user_has_role($role) {
     include 'db.inc.php';
 
     try {
