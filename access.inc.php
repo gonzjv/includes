@@ -30,8 +30,18 @@ function userIsLoggedIn() {
         header('Location: ' . $_POST['goto']);
         exit();
     }
+    if (isset($_SESSION['loggedIn'])) {
+        return db_contains_user($_SESSION['email'], $_SESSION['password']);
+    }
+}
 
+function sign_up() {
     if (isset($_POST['action']) and $_POST['action'] == 'sign_up') {
+        if ($_POST['pass'] != $_POST['pass_confirm']) {
+            $GLOBALS['sign_up_error'] = 'Passwords in fields are not identical';
+            exit();
+//            return FALSE;
+        }
         include 'db.inc.php';
         try {
             $sql = 'INSERT INTO user SET 
@@ -52,9 +62,6 @@ function userIsLoggedIn() {
         }
         header('Location: ' . $_POST['goto']);
         exit();
-    }
-    if (isset($_SESSION['loggedIn'])) {
-        return db_contains_user($_SESSION['email'], $_SESSION['password']);
     }
 }
 
