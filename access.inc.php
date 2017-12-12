@@ -35,13 +35,17 @@ function userIsLoggedIn() {
     }
 }
 
+function pass_ok() {
+    if (isset($_POST['action']) and $_POST['action'] == 'sign_up' and $_POST['pass'] !== $_POST['passConfirm']) {
+        $GLOBALS['signUpError'] = 'Passwords in fields are not identical';
+        return FALSE;
+    } else {
+        return TRUE;
+    }
+}
+
 function sign_up() {
-    if (isset($_POST['action']) and $_POST['action'] == 'sign_up') {
-        if ($_POST['pass'] != $_POST['pass_confirm']) {
-            $GLOBALS['sign_up_error'] = 'Passwords in fields are not identical';
-            exit();
-//            return FALSE;
-        }
+    if (isset($_POST['action']) and $_POST['action'] == 'sign_up'and pass_ok()) {
         include 'db.inc.php';
         try {
             $sql = 'INSERT INTO user SET 
