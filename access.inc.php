@@ -36,7 +36,7 @@ function userIsLoggedIn() {
 }
 
 function pass_ok() {
-    if (isset($_POST['action']) and $_POST['action'] == 'sign_up' and $_POST['pass'] !== $_POST['passConfirm']) {
+    if (isset($_POST['action']) and $_POST['action'] == 'sign_up' and $_POST['password'] !== $_POST['passConfirm']) {
         $GLOBALS['signUpError'] = 'Passwords in fields are not identical';
         return FALSE;
     } else {
@@ -45,19 +45,21 @@ function pass_ok() {
 }
 
 function sign_up() {
-    if (isset($_POST['action']) and $_POST['action'] == 'sign_up'and pass_ok()) {
+    if (isset($_POST['action']) and $_POST['action'] == 'sign_up' and pass_ok()) {
         include 'db.inc.php';
         try {
             $sql = 'INSERT INTO user SET 
             first_name= :first_name,
             last_name= :last_name,
             email=:email,
-            phone=:phone';
+            phone=:phone,
+            password=:password';
             $s = $pdo->prepare($sql);
             $s->bindValue(':first_name', $_POST['first_name']);
             $s->bindValue(':last_name', $_POST['last_name']);
             $s->bindValue(':email', $_POST['email']);
             $s->bindValue(':phone', $_POST['phone']);
+            $s->bindValue(':password', $_POST['password']);
             $s->execute();
         } catch (PDOException $e) {
             $error = 'Error when add user.';
