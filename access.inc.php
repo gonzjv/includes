@@ -52,22 +52,22 @@ function sign_up() {
             first_name= :first_name,
             last_name= :last_name,
             email=:email,
-            phone=:phone,
-            password=:password';
+            phone=:phone';
+//            password=:password';
             $s = $pdo->prepare($sql);
             $s->bindValue(':first_name', $_POST['first_name']);
             $s->bindValue(':last_name', $_POST['last_name']);
             $s->bindValue(':email', $_POST['email']);
             $s->bindValue(':phone', $_POST['phone']);
-            $s->bindValue(':password', $_POST['password']);
+//            $s->bindValue(':password', $_POST['password']);
             $s->execute();
         } catch (PDOException $e) {
             $error = 'Error when add user.';
             include 'error.html.php';
             exit();
         }
-        header('Location: ' . $_POST['goto']);
-        exit();
+//        header('Location: ' . $_POST['goto']);
+//        exit();
     }
 }
 
