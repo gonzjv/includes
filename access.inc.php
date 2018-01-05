@@ -47,6 +47,7 @@ function pass_ok() {
 //function sign_up() {
     if (isset($_POST['action']) and $_POST['action'] == 'sign_up' and pass_ok()) {
         include 'db.inc.php';
+        $password = md5($_POST['password'] . 'user');
         try {
             $sql = 'INSERT INTO user SET 
             first_name= :first_name,
@@ -59,7 +60,7 @@ function pass_ok() {
             $s->bindValue(':last_name', $_POST['last_name']);
             $s->bindValue(':email', $_POST['email']);
             $s->bindValue(':phone', $_POST['phone']);
-            $s->bindValue(':password', $_POST['password']);
+            $s->bindValue(':password', $password);
             $s->execute();
         } catch (PDOException $e) {
             $error = 'Error when add user.';
