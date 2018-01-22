@@ -44,7 +44,7 @@ function pass_ok() {
     }
 }
 
-//function sign_up() {
+function sign_up() {
     if (isset($_POST['action']) and $_POST['action'] == 'sign_up' and pass_ok()) {
         include 'db.inc.php';
         $password = md5($_POST['password'] . 'user');
@@ -67,8 +67,13 @@ function pass_ok() {
             include 'error.html.php';
             exit();
         }
+    return TRUE;
     }
-//}
+    else{
+        return FALSE;
+    } 
+        
+}
 
 function db_contains_user($email, $password) {
     include 'db.inc.php';
