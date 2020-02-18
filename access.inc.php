@@ -67,12 +67,10 @@ function sign_up() {
             include 'error.html.php';
             exit();
         }
-    return TRUE;
-    }
-    else{
+        return TRUE;
+    } else {
         return FALSE;
-    } 
-        
+    }
 }
 
 function db_contains_user($email, $password) {
